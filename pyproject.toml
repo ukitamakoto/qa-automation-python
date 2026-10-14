@@ -1,7 +1,7 @@
 [project]
 name = "qa-automation-python"
 version = "1.0.0"
-description = "UI and API test automation in Python: pytest, Playwright, requests, JSON Schema, GitHub Actions."
+description = "UI, API and SQL test automation in Python: pytest, Playwright, requests, JSON Schema, Postman/Newman, GitHub Actions."
 requires-python = ">=3.12"
 dependencies = []
 

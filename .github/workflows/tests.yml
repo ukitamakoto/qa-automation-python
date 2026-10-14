@@ -28,11 +28,25 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --frozen
-      - run: uv run pytest tests/api tests/meta --html=report/api.html --self-contained-html
+      - run: uv run pytest tests/api tests/sql tests/meta --html=report/api.html --self-contained-html
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: report-api
+          path: report/
+
+  postman:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: >
+          npx --yes -p newman@6.2.1 -p newman-reporter-htmlextra@1.23.1
+          newman run postman/restful-booker.postman_collection.json
+          -r cli,htmlextra --reporter-htmlextra-export report/postman.html
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-postman
           path: report/
 
   ui:
@@ -63,7 +77,7 @@ jobs:
 
   pages:
     if: ${{ always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
-    needs: [api, ui]
+    needs: [api, postman, ui]
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -87,7 +101,8 @@ jobs:
           <h1>qa-automation-python · latest test reports</h1>
           <p>Commit <code>${GITHUB_SHA::7}</code> · run <a href="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}">#${GITHUB_RUN_NUMBER}</a> · $(date -u '+%Y-%m-%d %H:%M UTC')</p>
           <ul>
-            <li><a href="api.html">API tests: Restful-Booker</a></li>
+            <li><a href="api.html">API tests (Restful-Booker) and SQL migration checks</a></li>
+            <li><a href="postman.html">Postman collection run with Newman: Restful-Booker</a></li>
             <li><a href="ui-chromium.html">UI tests in Chromium: SauceDemo</a></li>
             <li><a href="ui-firefox.html">UI tests in Firefox: SauceDemo</a></li>
           </ul>

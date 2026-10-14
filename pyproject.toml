@@ -1,0 +1,29 @@
+[project]
+name = "qa-automation-python"
+version = "1.0.0"
+description = "UI and API test automation in Python: pytest, Playwright, requests, JSON Schema, GitHub Actions."
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3",
+  "pytest-playwright>=0.7",
+  "pytest-html>=4.1",
+  "requests>=2.32",
+  "jsonschema>=4.23",
+  "ruff>=0.8",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra --strict-markers"
+xfail_strict = true
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
